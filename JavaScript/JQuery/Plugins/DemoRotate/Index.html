@@ -1,0 +1,83 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<title>Welcome to Sitecore</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<script src="lib/jquery-2.0.3.min.js" type="text/javascript"></script>
+	<script src="js/jquery.plugin.css.transform.js" type="text/javascript"></script>
+	<script src="js/jquery.plugin.rotate3Di.js" type="text/javascript"></script>
+    <script src="js/run.js" type="text/javascript"></script>
+
+    <style type="text/css" media="screen">
+body {
+    background: #333;
+}
+
+h2 a {
+    display: block;
+    padding: 48px 0;
+}
+
+p a {
+    display: block;
+    padding: 36px 24px;
+}
+
+#nav-list-example {
+    height: 132px;
+    width: 624px;
+    margin: 48px 0;
+}
+
+#nav-list-example li {
+    width: 132px;
+    height: 132px;
+    float: left;
+    margin-right: 24px;
+    position: relative;
+}
+
+#nav-list-example li div {
+    width: 132px;
+    height: 132px;
+    overflow: hidden;
+    background: white;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#nav-list-example li div.front {
+	background: yellow;
+}
+
+#nav-list-example li div.back {
+    left: -999em;
+    background: green;
+}
+</style>
+
+</head>
+<body> 
+<ul id="nav-list-example">
+    <li>
+        <div class="front"><h2>Apple</h2></div>
+        <div class="back"><p>Apples are a round fruit.</p></div>
+    </li>
+    <li>
+        <div class="front"><h2>Banana</h2></div>
+        <div class="back"><p>Bananas are a yellow fruit.</p></div>
+    </li>
+</ul>
+<ul id="nav-list-example">
+    <li>
+        <div class="front"><h2>Cherry</h2></div>
+        <div class="back"><p>Cherries are a delicious fruit.</p></div>
+    </li>
+    <li>
+        <div class="front"><h2>Durian</h2></div>
+        <div class="back"><p>Durians are a stinky fruit.</p></div>
+    </li>
+</ul>
+ </body>
+</html>

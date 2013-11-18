@@ -1,0 +1,375 @@
+<html>
+<head>
+<title>Наследование в JavaScript</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="keywords" content="JavaScript, inheritance, наследование, примеры, иллюстрации" />
+<link href="css/init.css" type="text/css" rel="stylesheet" title="style" />
+<link href="css/web.css" type="text/css" rel="stylesheet" title="style" />
+<link href="css/SyntaxHighlighter.css" type="text/css" rel="stylesheet" title="style" />
+<script type="text/javascript" src="js/shCore.js"></script>
+<script type="text/javascript" src="js/shBrushJScript.js"></script>
+<script type="text/javascript">
+	if(!this.__proto__) alert('Данный браузер не поддерживает необходимые для тестов функции. Используйте Firefox.');
+	function play(id)
+	{
+		var el;
+		if(el = document.getElementById(id)) eval(el.innerHTML);
+	}
+	
+	//
+	Object.extend = function(_constructor, _prototype)
+	{
+		if(!_constructor) var _constructor = function(){};
+		_constructor.prototype = new this();
+		if(_prototype)
+			for(property in _prototype)
+				if(_prototype.hasOwnProperty(property)) _constructor.prototype[property] = _prototype[property];
+		_constructor.prototype.constructor = _constructor;
+		_constructor.parent = this;
+		_constructor.name = _constructor.name;
+		_constructor.extend = this.extend;
+		return _constructor;
+	};
+	
+	//
+	window.onload = function()
+	{
+		dp.SyntaxHighlighter.ClipboardSwf = 'js/clipboard.swf';
+		dp.SyntaxHighlighter.HighlightAll('code');
+	};
+</script>
+</head>
+<body>
+<h1>Предисловие.</h1>
+<p>Часто приходится наблюдать применение процедурного программирования на JavaScript. Или имитацию «классического» ООП. Ещё чаще это выглядит надругательством над возможностями JS, которое, я уверен, даёт о себе знать с усложнением проектов.<br/>
+Данная статья призвана донести простым языком тему наследования в JS.<br/>
+Для выполнения тестов вам понадобится <a href="http://www.mozilla.com/en-US/firefox/">Firefox</a>.<br/>
+Выражаю благодарность Алексу Горбачёву за <a href="http://www.dreamprojections.com/syntaxhighlighter">подсветку кода</a>.</p>	
+
+<h1>То, что уже должно быть известно.</h1>
+<p>JavaScript оперирует <em>объектами</em>.<br/>
+Объект можно представить как контейнер со <em>свойствами</em>.<br/>
+Свойства неупорядочены, именованы, их значениями могут быть примитивные значения или ссылки на другие объекты.</p>
+<p>Объекты могут быть <em>классифицированы</em>.<br/>
+Абстрагируйтесь от понятий класса, таких как в C++. Что, в принципе, есть класс объектов? Можно ответить, что некоторая схожесть. Иными словами, одинаковые свойства.<br/>
+Истинной одинаковости свойств можно достичь сделав такие свойства <em>общими</em> для всех объектов класса. А для простоты можно тупо сложить эти общие свойства в <em>отдельно взятый объект</em>, для связи разумно снабдив всех ссылками на него.
+Так и сделано в JavaScript. Объект класса может иметь <em>собственные</em> свойства, те, которые находятся в нём, и <em>внешние</em> — те, которые находятся в так называемом <em>объекте-прототипе</em>.<br/>
+Собственные свойства имеют приоритет, т.е. при обращении к свойству объекта поиск происходит в его собственных свойствах и только при ненахождении переходит по ссылке в объект-прототип. Используя это, можно «перекрывать» общие свойства собственными.<br/> 
+Отдельный изюм в том, что прототип, являясь, вообще-то, самым обычным объектом, может уже относиться к какому-то классу объектов, т.е. иметь и собственный прототип. Так мы можем создавать целые цепочки классов, когда каждый новый будет наследовать (а за счёт перекрытия собственных свойств прототипа и изменять) общие свойства всех предыдущих.<br/> 
+Теперь о том, как именно всё происходит.</p>
+
+<h1>Конструктор.</h1>
+<p>Новые объекты создаются оператором <em>new</em> с указанием <em>функции-конструктора</em>, которая также может выполнить <em>инициализацию</em> созданного объекта — присвоить начальные значения его свойств.<br/>
+Конструктор выполняется <em>в контексте</em> свежесозданного объекта: всё, что произойдёт внутри конструктора будет касаться созданного объекта, оператор <em>this</em> будет указывать на созданный объект.<br/>
+Конструктор, являясь изначальным имиджмейкером новорожденного, фактически, определяет его класс (повторюсь — не путайте с классами C++). Поэтому все объекты будем смело называть <em>экземплярами</em> некоторого класса, имея в виду конструктор.</p>
+<div class="code">
+<pre class="js" name="code" id="construct">
+var Figure = function()						// создаём конструктор
+{
+	alert(this);							// при создании объекта, this будет указывать на свежесозданный объект,
+	this.prop1 = 'собственнное свойство';	// так что можно будет назначить этому объекту собственное свойство
+};
+
+var fig1 = new Figure();					// создаём экземпляр Figure
+alert(fig1 instanceof Figure);				// (true)	объект действительно является экземпляром Figure
+alert(fig1.prop1);							// ('собственнное свойство')	было назначено в конструкторе
+alert(fig1.hasOwnProperty('prop1'));		// (true)	свойство действительно собственное, т.е. находится в самом объекте
+</pre>
+<a class="eval" onclick = "play('construct');">Выполнить</a>
+</div>
+<p>Напомню, что для некоторых конструкторов есть сокращённая запись создания экземпляров.<br/>
+p = {...}; аналогично p = new Object();<br/> 
+p = [...]; аналогично p = new Array();<br/>
+p = /.../; аналогично p = new RegExp();</p>
+<p>Кстати, не стоит путать это с созданием <em>примитивных значений</em>.</p>
+<div class="code">
+<pre class="js" name="code" id="types">
+var str1 = new String('Строка');
+var str2 = 'Строка';
+alert(typeof str1);							// (object)				объект
+alert(typeof str2);							// (string)				примитивное значение, т.е. несмотря на кажущееся сходство, значения не однотипные
+str1.property = "Некое свойство";			//				
+str2.property = "Некое свойство";			//				
+alert(str1.property);						// ("Некое свойство")	в отличие от объекта
+alert(str2.property);						// (undefined)			примитивное значение не может иметь свойств
+alert(str1.substr)							// (function)			тем не менее, существует скрытая связь между примитивными значениями и соответствующими классами
+alert(str2.substr)							// (function)			позволяющая использовать примитивные значения интуитивно
+</pre>
+<a class="eval" onclick = "play('types');">Выполнить</a>
+</div>
+
+<h1>Прототип.</h1>
+<p>Леопардовым наскоком подкрадываемся к прототипам.<br/>
+При создании конструктора у него <em>автоматически</em> (т.е. без участия программиста) создаётся собственное свойство <em>prototype</em>, которое и содержит тот самый <em>объект-прототип</em>, кладезь внешних свойств будущих экземпляров.<br/>
+Такой автоматически создаваемый прототип принадлежит к классу <em>Object</em> (инициализируется конструктором <em>Object</em>).</p>
+<img src="img/prototype.gif"/>
+<div class="code">
+<pre class="js" name="code" id="prototype">
+var Figure = function(){};					// создаём конструктор
+alert(Figure.hasOwnProperty('prototype'));	// (true)	прототип уже создан, автоматически; это собственное свойство конструктора 
+alert(Figure.prototype instanceof Object);	// (true)	сам по себе автоматически созданный прототип является экземпляром Object
+</pre>
+<a class="eval" onclick = "play('prototype');">Выполнить</a>
+</div>
+
+<h1>Новый объект.</h1>
+<p>При создании нового объекта у него <em>автоматически</em> (обратно без участия программиста) создаётся собственное свойство, <em>указывающее</em> на хранимый конструктором прототип.<br/>
+По стандарту оно недоступно для просмотра и редактирования, но, к счастью, Firefox любезно предоставляет к нему доступ через <em>__proto__</em>.</p>
+<img src="img/__proto__.gif"/>
+<div class="code">
+<pre class="js" name="code" id="__proto__">
+var Figure = function(){};					// создаём конструктор
+alert(Figure.hasOwnProperty('prototype'));	// (true)	прототип на месте
+
+var fig1 = new Figure();					// создаём экземпляр Figure
+alert(fig1 instanceof Figure);				// (true)	кто бы сомневался
+alert(fig1.__proto__ === Figure.prototype);	// (true)	__proto__ указывает на прототип в Figure
+</pre>
+<a class="eval" onclick = "play('__proto__');">Выполнить</a>
+</div>
+
+<h1>Поиск свойств объекта.</h1>
+<p>При обращении к свойству объекта сначала будет произведен поиск в самом объекте.<br/>
+При ненахождении, поиск перейдёт в объект, на который указывает <em>__proto__</em>.</p>
+<img src="img/property_search.gif"/>
+<div class="code">
+<pre class="js" name="code" id="property_search">
+var Figure = function(){};											// создаём конструктор
+Figure.prototype.move = function(){ alert('двигаем фигуру'); };		// создаём метод в прототипе
+
+var fig1 = new Figure();											// создаём экземпляр Figure
+alert(fig1.move);													// (function)	метод присутствует,
+alert(fig1.hasOwnProperty('move')); 								// (false)	но он не находится в объекте
+alert(fig1.move === fig1.__proto__.move);							// (true)	один и тот же объект, т.е. метод экземпляра находится через __proto__
+</pre>
+<a class="eval" onclick = "play('property_search');">Выполнить</a>
+</div>
+<p>Являясь таким же объектом, как и любой другой, прототип имеет своё собственное свойство <em>__proto__</em>.<br/>
+Это значит, что если в прототипе что-то ищут и не находят, поиск переходит по его <em>__proto__</em> уже в его прототип. И так далее, до прототипа, у которого <em>__proto__</em> «никуда не ведёт», т.е. <em>null</em> или <em>undefined</em>.</p>
+<img src="img/inheritance1.gif"/></p>
+<p>Такая связь прототипов осуществляет <em>цепочку наследования</em>.<br/><em>Собственными</em> свойствами прототипов в цепи можно <em>дополнять</em> предыдущий функционал.</p>
+<img src="img/inheritance2.gif"/>
+<p>И не только дополнять, но и <em>изменять</em>! Ведь способы реализации объектов разных классов могут быть разными. Круглое — катим, квадратное — толкаем.</p>
+<img src="img/inheritance3.gif"/>
+<p>А если особой реализации требует <em>отдельный объект</em> класса, просто создаём его <em>собственное</em> свойство и оно <em>перекроет</em> все остальные.</p>
+<img src="img/inheritance4.gif"/>
+<div class="code">
+<pre class="js" name="code" id="inheritance1">
+var Figure = function(){};										// создаём конструктор
+Figure.prototype.move = function(){ alert('двигаем фигуру'); };	// создаём метод в прототипе
+
+var Circle = function(){};										// Circle будет как-бы "расширением" Figure ("Круг" будет обладать большими свойствами, чем просто "Фигура")
+Circle.prototype = new Figure();								// для этого прототипом делаем экземпляр Figure, он «предоставит» наследуемые свойства, в частности — move
+Circle.prototype.scale = function(){ alert('увеличиваем круг'); };	// добавляем к прототипу Circle новый метод
+
+var cir1 = new Circle();										// создаём экземпляр Circle
+alert(cir1.scale);												// (function)	новый метод на месте,
+alert(cir1.hasOwnProperty('scale'));							// (false)	он не является собственностью экземпляра,
+alert(cir1.__proto__.hasOwnProperty('scale'));					// (true)	а находится в прототипе в Circle
+
+alert(cir1.move);												// (function)	метод из прототипа в Figure также вполне наследуется
+alert(cir1.hasOwnProperty('move'));								// (false)	и, естественно, не является собственным; попробуем «дойти» до него по цепочке прототипов 
+alert(cir1.__proto__.hasOwnProperty('move'));					// (false)	прототип по cir1.__proto__ (Circle.prototype) не имеет собственных свойств; пойдём дальше
+alert(cir1.__proto__.__proto__.hasOwnProperty('move'));			// (true)	cir1.__proto__ -> Circle.prototype (не содержит move) -> Circle.prototype.__proto__ -> Figure.prototype (содержит move)
+
+var cir2 = new Circle();										// ещё экземпляр Circle
+
+Circle.prototype.move = function(){ alert('катим круг'); };		// круглое — катим
+cir1.move();													// катится!
+cir2.move();													// тоже катится
+
+cir2.move = function(){ alert('круг леопардовым наскоком...'); };	// перекрываем внешний метод собственным
+
+cir1.move();													// и пока все катятся
+cir2.move();													// конкретно этот ещё и подпрыгивает
+</pre>
+<a class="eval" onclick = "play('inheritance1');">Выполнить</a>
+</div>
+
+<p>Нужно помнить, что создание <em>нового прототипа</em> вызывает проблему: свойство <em>__proto__</em> уже созданных экземпляров по-прежнему будет указывать на старый прототип (ведь его никто не удалял!).<br/>
+А конструктор, получив новый prototype, потеряет связь со старым.</p>
+<img src="img/lost_proto.gif"/>
+<div class="code">
+<pre class="js" name="code" id="lost_proto">
+var Figure = function(){};										// создаём конструктор
+Figure.prototype.move = function(){ alert('двигаем фигуру'); };
+
+var fig1 = new Figure();										// создаём экземпляр Figure
+alert(fig1.move);												// (function)	метод move прототипа виден
+
+Figure.prototype = new Object();								// создаём новый прототип, метод move должен «исчезнуть»
+alert(fig1.move);												// (function)	но он виден — свойство __proto__ по-прежнему указывает на старый прототип,
+alert(Figure.prototype === fig1.__proto__);						// (false)	а вот Figure старый прототип уже «не видит»
+</pre>
+<a class="eval" onclick = "play('lost_proto');">Выполнить</a>
+</div>
+<p>Это нужно учитывать. Если есть необходимость полностью заменить прототип, делать это нужно <em>до</em> создания экземпляров.<br/>
+Позже перенаправить <em>__proto__</em> экземпляров будет нельзя.</p>
+
+<h1>Чем я был создан?</h1>
+<p>Для успешного определения «родства» объектов ознакомимся со свойством прототипа <em>constructor</em>.<br/>
+При автоматическом создании прототипа оно также создаётся <em>автоматически</em> (без участия программиста, тобишь), как собственное, и <em>указывает</em> на содержащий прототип конструктор.</p>
+<img src="img/constructor.gif"/>
+<div class="code">
+<pre class="js" name="code" id="constructor">
+var Figure = function(){};								// создаём конструктор
+alert(Figure.hasOwnProperty('prototype'));				// (true)	
+alert(Figure.prototype.hasOwnProperty('constructor'));	// (true)	прототип имеет собственное свойство, также созданное автоматически
+alert(Figure.prototype.constructor === Figure);			// (true)	«указатель на конструктор» действительно указывает на конструктор
+</pre>
+<a class="eval" onclick = "play('constructor');">Выполнить</a>
+</div>
+
+<p>Свойство <em>constructor</em> доступно всем экземплярам по цепочке наследования.<br/>
+Через это экземплярам доступен сам конструктор.</p>
+<img src="img/constructor_search.gif"/>
+<div class="code">
+<pre class="js" name="code" id="constructor_search">
+var Figure = function(){};								// создаём конструктор
+
+var fig1 = new Figure();								// создаём экземпляр Figure
+alert(fig1.constructor);								// (function)	свойство присутствует
+alert(fig1.constructor === Figure);						// (true)	и указывает на конструктор
+alert(fig1.hasOwnProperty('constructor')); 				// (false)	оно не находится в объекте,
+alert(fig1.constructor === fig1.__proto__.constructor);	// (true)	а найдено через __proto__
+</pre>
+<a class="eval" onclick = "play('constructor_search');">Выполнить</a>
+</div>
+
+<p>При переопределении прототипа о свойстве <em>constructor</em> желательно также не забывать — автоматически оно создаётся <em>только при автоматическом</em> создании прототипа.</p> 
+<img src="img/lost_constructor.gif"/>
+<div class="code">
+<pre class="js" name="code" id="lost_constructor">
+var Figure = function(){};										// создаём конструктор
+Figure.prototype = new Object();								// создаём новый прототип
+alert(Figure.prototype.hasOwnProperty('constructor'));			// (false)	новый прототип не имеет свойства constructor
+
+var fig1 = new Figure();										// создаём экземпляр Figure
+alert(fig1.constructor);										// (function)	но экземпляр видит constructor!
+alert(fig1.__proto__.hasOwnProperty('constructor'));			// (false)	уже догадываетесь?...
+alert(fig1.__proto__.__proto__.hasOwnProperty('constructor'));	// (true)	по цепочке наследования свойство constructor найдено у прототипа прототипа,
+alert(fig1.__proto__.__proto__.constructor === Object);			// (true)	а это вовсе даже Object
+alert(fig1.constructor === Figure);								// (false)	и вот уже мы не можем правильно определить «родство» объекта
+</pre>
+<a class="eval" onclick = "play('lost_constructor');">Выполнить</a>
+</div>
+
+<p>Чтобы не попасть впросак, лучше помнить о свойстве constructor.</p>
+<div class="code">
+<pre class="js" name="code" id="find_constructor">
+var Figure = function(){};				// создаём конструктор
+Figure.prototype = new Object();		// создаём новый прототип
+Figure.prototype.constructor = Figure;	// назначаем заново свойство constructor 
+
+var fig1 = new Figure();				// создаём экземпляр Figure
+alert(fig1.constructor === Figure);		// (true)	теперь «родство» определяется верно
+</pre>
+<a class="eval" onclick = "play('find_constructor');">Выполнить</a>
+</div>
+
+<h1>Упрощаем.</h1>
+<p>Вот мой способ сведения рутинных телодвижений по оформлению наследства к минимуму.</p>
+<div class="code">
+<pre class="js" name="code" id="extender">
+Object.extend = function(_constructor, _prototype)		// на вход принимаем будущий конструктор и объект, чьи свойства будут скопированы в прототип
+{
+	if(!_constructor) var _constructor = function(){};	// если конструктор не дан, создаём сами
+	_constructor.prototype = new this();				// создаём прототип из «расширяемого» конструктора, в данном случае — Object
+														// (автоматически созданный прототип должен уничтожиться сборщиком мусора за ненадобностью)
+	if(_prototype)										// копируем переданные свойства в прототип
+		for(property in _prototype)
+			if(_prototype.hasOwnProperty(property)) _constructor.prototype[property] = _prototype[property];
+	_constructor.prototype.constructor = _constructor;	// возвращаем «потерянное» свойство constructor 
+	_constructor.parent = this;							// на всякий случай сохраним ссылку на «основу»
+	_constructor.extend = this.extend;					// новый конструктор также должен уметь «расширять» от себя
+	return _constructor;								// возвращаем готовый конструктор
+};
+</pre>
+<!--<a class="eval" onclick = "play('extender');">Выполнить</a>-->
+</div>
+
+<p>Попробуем его в деле.</p>
+<div class="code">
+<pre class="js" name="code" id="extender_test">
+var Figure = Object.extend(function()						// создадим новый конструктор, наследующий от Object
+	{														// тело инициализирующей функции — будущего конструктора
+		alert('создаём фигуру');
+	},
+	{ move:function(){ alert('двигаем фигуру'); } });		// отсюда будут скопированы свойства в прототип 
+
+var fig1 = new Figure();									// ('создаём фигуру')
+fig1.move();												// ('двигаем фигуру')
+
+var Circle = Figure.extend(function()						// ещё один конструктор, наследующий уже от Figure; ('создаём фигуру') сигнализирует о создании прототипа конструктором Figure
+	{
+		alert('создаём круг');
+	});	 
+Circle.prototype.scale = function(){ alert('увеличиваем круг'); };		// естественно, к прототипу можно обращаться и напрямую
+
+var cir1 = new Circle();			// ('создаём круг')
+cir1.move();						// ('двигаем фигуру')
+cir1.scale();						// ('увеличиваем круг')
+
+var Donut = Circle.extend(function()						// и ещё один конструктор, наследующий теперь от Circle; ('создаём круг') сигнализирует о создании прототипа конструктором Circle
+	{
+		alert('создаём бублик');
+	},
+	{ eat:function(){ alert('едим бублик'); } });
+
+var don1 = new Donut();				// ('создаём бублик')
+don1.move();						// ('двигаем фигуру')
+don1.scale();						// ('увеличиваем круг')
+don1.eat();							// ('едим бублик')
+
+Donut.prototype.scale = function(){ alert('увеличиваем бублик'); };	// например, у бублика есть толщина — изменим и способ масштабирования
+
+don1.scale();						// ('увеличиваем бублик')	теперь размер бублика меняется по-другому
+cir1.scale();						// ('увеличиваем круг')	а у кругляшка всё осталось по-прежнему
+</pre>
+<a class="eval" onclick = "play('extender_test');">Выполнить</a>
+</div>
+
+<p>Конструктор Object в качестве «базы для расширения» выбран неспроста — объект <em>prototype</em> Object`а не имеет своего прототипа, следовательно и объекта для продолжения поисков свойств.</p>  
+<div class="code">
+<pre class="js" name="code" id="base">
+alert(Object.prototype.__proto__);	// (null)	цепочка наследования у будущих экземпляров останавливается здесь
+</pre>
+<a class="eval" onclick = "play('base');">Выполнить</a>
+</div>
+<p>Чем раньше остановится поиск, тем быстрее мы получим результат.</p>
+
+<h1>Продолжение следует.</h1>
+<p>Если есть вопросы или уточнения — <a href="mailto:thesphere@inbox.ru">велкам</a>.</p>
+<p>&copy; disaen.com, <a href="mailto:thesphere@inbox.ru">sphere</a></p>
+
+<!-- HotLog -->
+
+<script type="text/javascript" language="javascript">
+hotlog_js="1.0";
+hotlog_r=""+Math.random()+"&s=458960&im=134&r="+escape(document.referrer)+"&pg="+
+escape(window.location.href);
+document.cookie="hotlog=1; path=/"; hotlog_r+="&c="+(document.cookie?"Y":"N");
+</script>
+<script type="text/javascript" language="javascript1.1">
+hotlog_js="1.1";hotlog_r+="&j="+(navigator.javaEnabled()?"Y":"N")
+</script>
+<script type="text/javascript" language="javascript1.2">
+hotlog_js="1.2";
+hotlog_r+="&wh="+screen.width+'x'+screen.height+"&px="+
+(((navigator.appName.substring(0,3)=="Mic"))?
+screen.colorDepth:screen.pixelDepth)</script>
+<script type="text/javascript" language="javascript1.3">hotlog_js="1.3"</script>
+<script type="text/javascript" language="javascript">hotlog_r+="&js="+hotlog_js;
+document.write("<a href='http://click.hotlog.ru/?458960' target='_top'><img "+
+" src='http://hit24.hotlog.ru/cgi-bin/hotlog/count?"+
+hotlog_r+"&' border=0 width=88 height=31 alt=HotLog><\/a>")
+</script>
+<noscript>
+<a href="http://click.hotlog.ru/?458960" target="_top">
+<img src="http://hit24.hotlog.ru/cgi-bin/hotlog/count?s=458960&amp;im=134" border="0" 
+ width="88" height="31" alt="HotLog"></a>
+</noscript>
+
+<!-- /HotLog -->
+</body>
+</html>

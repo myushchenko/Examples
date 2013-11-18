@@ -1,0 +1,22 @@
+@charset "utf-8";
+
+
+html 		{ font:normal 10pt/12pt tahoma, sans-serif; }
+body		{ padding:10px; }
+
+
+a			{ text-decoration:underline; }
+
+
+.code		{ margin-bottom:1em; }
+.code a		{ color:rgb(0,100,220); }
+.code .js	{ border:none; font:normal 10pt courier, tahoma, sans-serif; width:100%; }
+
+
+em			{ color:#950e70; font-style:italic; }
+
+
+h1			{ color:#ee9200; font:italic 15pt georgia, "Times New Roman", serif; margin:0; margin-bottom:0.2em; margin-top:1.2em; padding:0; }
+
+
+p			{ margin-bottom:1em; }

@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5C4B38EE-741C-472C-AA47-B7D623B25E9D}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CSharp.Tricks</RootNamespace>
+    <AssemblyName>CSharp.Tricks</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Attributes\AttributesDemo.cs" />
+    <Compile Include="Collections\ArrayListDemo.cs" />
+    <Compile Include="ExtensionMethods\ExtensionEnumeratedTypeDemo.cs" />
+    <Compile Include="GarbageCollection\Details\2SimpleGC.cs" />
+    <Compile Include="GarbageCollection\Details\1GCExample.cs" />
+    <Compile Include="GarbageCollection\Details\3SimpleFinalize.cs" />
+    <Compile Include="GarbageCollection\Details\4SimpleDispose.cs" />
+    <Compile Include="GarbageCollection\Details\5FinalizableDisposableClass.cs" />
+    <Compile Include="GarbageCollection\Details\4SimpleDisposeRelease.cs" />
+    <Compile Include="GarbageCollection\GaDestructor2Demo.cs" />
+    <Compile Include="GarbageCollection\GaGeneration2Demo.cs" />
+    <Compile Include="GarbageCollection\GaGenerationDemo.cs" />
+    <Compile Include="GarbageCollection\GaDestructorDemo.cs" />
+    <Compile Include="GarbageCollection\GarbageCollection2Demo.cs" />
+    <Compile Include="Operators\DefiningOperatorDemo.cs" />
+    <Compile Include="Performance\BoxingAndUnboxingDemo.cs" />
+    <Compile Include="Performance\StringBuilderAndStringDemo.cs" />
+    <Compile Include="Performance\DictionaryVsListDemo.cs" />
+    <Compile Include="Collections\YieldKeywordExtDemo.cs" />
+    <Compile Include="Collections\YieldKeywordDemo.cs" />
+    <Compile Include="Delegates\ActionDelegateDemo.cs" />
+    <Compile Include="Delegates\ExternalVarFuncDelegateDemo.cs" />
+    <Compile Include="Delegates\GroupDelegateDemo.cs" />
+    <Compile Include="Delegates\FuncDelegateDemo.cs" />
+    <Compile Include="Delegates\GenericDelegateDemo.cs" />
+    <Compile Include="Delegates\ModernLanguageConstructs\NormalDelegateDemo.cs" />
+    <Compile Include="Delegates\SimpleDelegateDemo.cs" />
+    <Compile Include="Events\EventSimpleDemo.cs" />
+    <Compile Include="Exceptions\ExceptionDemo.cs" />
+    <Compile Include="ExtensionMethods\ExtensionMethodDemo.cs" />
+    <Compile Include="GarbageCollection\GarbageCollectionDemo.cs" />
+    <Compile Include="Generics\LinkedListDemo.cs" />
+    <Compile Include="Generics\HashSetDemo.cs" />
+    <Compile Include="Generics\GenericMethodDemo.cs" />
+    <Compile Include="Generics\GenericClassDemo.cs" />
+    <Compile Include="MyImmutable\MyImmutableDemo.cs" />
+    <Compile Include="OfficeExcel\OfficeExcelDemo.cs" />
+    <Compile Include="OOP\PolymorphismDemo.cs" />
+    <Compile Include="OOP\StaticConstructorDemo.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reflections\AccessPrivateMemeberDemo.cs" />
+    <Compile Include="Reflections\ChangePrivateMemeberDemo.cs" />
+    <Compile Include="Reflections\TypeInfoDemo.cs" />
+    <Compile Include="Snippets\CodeFile.cs" />
+    <Compile Include="Strings\StringImmutableDemo.cs" />
+    <Compile Include="Strings\StringEqualityDemo.cs" />
+    <Compile Include="Strings\StringInternDemo.cs" />
+    <Compile Include="Threads\AsyncAwaitDemo.cs" />
+    <Compile Include="Threads\LockDemo.cs" />
+    <Compile Include="WeakReference\ReconstituteWeakReferencetDemo.cs" />
+    <Compile Include="WeakReference\GarbageWeakReferencetDemo.cs" />
+    <Compile Include="WeakReference\WeakReferencetCacheDemo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="Snippets\My Snippets.snippet" />
+    <None Include="Snippets\Snippets for GoF.snippet" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

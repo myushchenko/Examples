@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Demo Require JS</title>
+
+	<script data-main="js/config" src="lib/require.js"></script>
+	<style>
+	p {
+		background: yellow;
+	}
+  </style>
+  
+</head>
+<body>
+	<h1>Demo Require JS (AMD)</h1>
+
+	<div style="width:400px;">
+		<span>New product:</span></br>
+		<span>Name:</span><input id="txtName" size="30" type="input"></input>
+		</br>
+		<span>Model:</span><input id="txtModel" size="30" type="input"></input>
+		</br>
+		<input id="btnAddProduct" type="button" value="Add new product"></input>
+		<div id="divProducts"></div>
+	</div>
+
+<!--
+	<script type="text/javascript">
+  	(function($, undefined){
+  		$("#txtName").val("Name");
+  	})(jQuery)
+  </script>
+-->
+</body>
+</html>
